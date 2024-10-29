@@ -18,4 +18,5 @@ urlpatterns = [
     path('excluir_ativo/', views.excluir_ativo, name='excluir_ativo'),
     path('iniciar_monitoramento/', views.iniciar_monitoramento, name='iniciar_monitoramento'),
     path('parar_monitoramento/', views.parar_monitoramento, name='parar_monitoramento'),
+    path('get_ativo_grafico/<int:ativo_id>/', views.get_ativo_grafico, name='get_ativo_grafico'),
 ]

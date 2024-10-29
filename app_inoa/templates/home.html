@@ -39,11 +39,49 @@
             font-size: 1.1rem;
             margin-top: 10px;
         }
+
+        .custom-navbar {
+            background-color: #1a1a1a !important;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-navbar .navbar-brand {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .custom-navbar .nav-link {
+            color: #ffffff !important;
+            font-size: 16px;
+            padding: 8px 20px !important;
+            transition: all 0.3s ease;
+        }
+
+        .custom-navbar .nav-link:hover {
+            color: #00b8d4 !important;
+        }
+
+        .custom-navbar .nav-item {
+            margin: 0 5px;
+        }
+
+        .navbar-nav {
+            align-items: center;
+        }
+
+        @media (max-width: 991px) {
+            .custom-navbar .nav-link {
+                padding: 10px 15px !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-light">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg custom-navbar">
         <div class="container">
             <a class="navbar-brand" href="#">Monitoramento de Ativos</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

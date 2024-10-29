@@ -12,6 +12,13 @@ import time
 from django.core.mail import send_mail
 from django.conf import settings
 import logging
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import io
+import base64
+from datetime import datetime, timedelta
+import matplotlib.dates as mdates
 
 # Create your views here.
 logger = logging.getLogger(__name__)
@@ -296,3 +303,60 @@ def parar_monitoramento(request):
         'status': 'success',
         'message': 'Monitoramento encerrado com sucesso!'
     })
+
+@login_required
+def get_ativo_grafico(request, ativo_id):
+    try:
+        ativo = Ativo.objects.get(id=ativo_id, id_usuario=request.user)
+        
+        # Obter dados históricos
+        ticker = yf.Ticker(ativo.nome + '.SA')
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=30)
+        hist = ticker.history(start=start_date, end=end_date)
+        
+        # Criar o gráfico com estilo padrão
+        plt.style.use('default')  # Mudamos de 'seaborn' para 'default'
+        
+        # Criar o gráfico
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(hist.index, hist['Close'], 'bo-', linewidth=2, markersize=6)
+        ax.grid(True, linestyle='--', alpha=0.7)
+        ax.set_title(f'Histórico de Preços - {ativo.nome}', pad=20, fontsize=12)
+        ax.set_xlabel('Data', fontsize=10)
+        ax.set_ylabel('Preço de Fechamento (R$)', fontsize=10)
+        
+        # Formatar eixo x para mostrar datas
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d/%m'))
+        plt.xticks(rotation=45)
+        
+        # Adicionar linhas horizontais para os valores máximo e mínimo
+        ax.axhline(y=float(ativo.valor_maximo), color='red', linestyle='--', label='Valor Máximo')
+        ax.axhline(y=float(ativo.valor_minimo), color='green', linestyle='--', label='Valor Mínimo')
+        
+        # Ajustar layout e adicionar legenda
+        plt.tight_layout()
+        ax.legend()
+        
+        # Salvar o gráfico em um buffer
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png', bbox_inches='tight', dpi=100)
+        buffer.seek(0)
+        image_png = buffer.getvalue()
+        buffer.close()
+        plt.close('all')  # Fechar todas as figuras para liberar memória
+        
+        # Converter para base64
+        graphic = base64.b64encode(image_png).decode('utf-8')
+        
+        return JsonResponse({
+            'status': 'success',
+            'graphic': graphic
+        })
+        
+    except Exception as e:
+        print(f"Erro ao gerar gráfico: {str(e)}")  # Adicionar log de erro
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        })
