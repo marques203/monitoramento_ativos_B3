@@ -64,7 +64,7 @@ def logout_view(request):
     
     for ativo in ativos:
         if ativo.id in monitoring_threads:
-            # Não podemos interromper a thread diretamente, então vamos removê-la do dicionário
+            # Não pode interromper a thread diretamente, então vou removê-la do dicionário
             del monitoring_threads[ativo.id]
     
     logout(request)
@@ -108,8 +108,7 @@ def cadastrar_ativo(request):
 @login_required
 def buscar_ativos(request):
     query = request.GET.get('q', '')
-    # Aqui você deve implementar a lógica para buscar os ativos da B3
-    # Por enquanto, vamos usar uma lista de exemplo
+    
     ativos_b3 = [
     "PDGR3", "HAPV3", "USIM5", "VALE3", "PETR4", "COGN3", "BBDC4", "CPLE6", "B3SA3", "CVCB3", 
     "ITSA4", "RAIL3", "MGLU3", "ABEV3", "AZUL4", "RAIZ4", "NTCO3", "ITUB4", "ASAI3", "RDOR3", 
@@ -253,7 +252,7 @@ class MonitoramentoThread:
                         return
                     time.sleep(1)
 
-# Modifique a variável global para armazenar objetos MonitoramentoThread
+# variável global para armazenar objetos MonitoramentoThread
 monitoring_threads = {}
 
 @login_required
@@ -309,16 +308,16 @@ def get_ativo_grafico(request, ativo_id):
     try:
         ativo = Ativo.objects.get(id=ativo_id, id_usuario=request.user)
         
-        # Obter dados históricos
+        # Obter dados históricos utilizando a API do Yahoo Finance
         ticker = yf.Ticker(ativo.nome + '.SA')
         end_date = datetime.now()
         start_date = end_date - timedelta(days=30)
         hist = ticker.history(start=start_date, end=end_date)
         
-        # Criar o gráfico com estilo padrão
-        plt.style.use('default')  # Mudamos de 'seaborn' para 'default'
         
-        # Criar o gráfico
+        plt.style.use('default')  
+        
+        
         fig, ax = plt.subplots(figsize=(10, 6))
         ax.plot(hist.index, hist['Close'], 'bo-', linewidth=2, markersize=6)
         ax.grid(True, linestyle='--', alpha=0.7)
@@ -330,11 +329,11 @@ def get_ativo_grafico(request, ativo_id):
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%d/%m'))
         plt.xticks(rotation=45)
         
-        # Adicionar linhas horizontais para os valores máximo e mínimo
+        
         ax.axhline(y=float(ativo.valor_maximo), color='red', linestyle='--', label='Valor Máximo')
         ax.axhline(y=float(ativo.valor_minimo), color='green', linestyle='--', label='Valor Mínimo')
         
-        # Ajustar layout e adicionar legenda
+        
         plt.tight_layout()
         ax.legend()
         
@@ -355,7 +354,7 @@ def get_ativo_grafico(request, ativo_id):
         })
         
     except Exception as e:
-        print(f"Erro ao gerar gráfico: {str(e)}")  # Adicionar log de erro
+        print(f"Erro ao gerar gráfico: {str(e)}")  
         return JsonResponse({
             'status': 'error',
             'message': str(e)
