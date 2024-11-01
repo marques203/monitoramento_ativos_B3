@@ -28,7 +28,7 @@ Sistema web para monitoramento de ativos da B3 com envio de alertas por email qu
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/seu-usuario/monitoramento-b3.git
+git clone https://github.com/marques203/monitoramento_ativos_B3.git
 ```
 2. Crie e ative um ambiente virtual:
 ```bash
